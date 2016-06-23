@@ -31,7 +31,6 @@ Table.prototype={
 	}
 }
 
-
 //创建表单
 
 function createTable(table,set){
@@ -45,71 +44,53 @@ function createTable(table,set){
 	return table;
 };
 
-
 function tableHead(table,set){
-	var t_head=document.createElement('tr');
-		
-		t_head.className='trow';
-		for (var i=0; i<set.table_col; i++){
+	var thead=document.createElement('tr');
+		thead.className='trow';
+	var th='';
+	for (var i=0; i<set.table_col; i++){
+		th+='<th class="tdata" col_th='+i+'>'+set.table_head[i]
+			+'<div class="sort_icon"><img src="table_plugin/sort35.png" /><span class="up"></span><span class="down"></span></div>'
+			+'</th>';
+	}
+		//绑定排序事件
+	thead.innerHTML=th;
+	thead.addEventListener('click',function(event){   /////////事件委托
+		var event=event || window.event;
+		var target=event.target || event.srcElement;
+		if(target.nodeName.toUpperCase()=='SPAN'){
+			Sorting(event,table,set);
+		}  
 
-			var th=document.createElement('th');
+	},false);
 
-			th.className='tdata';
-			th.setAttribute('col_th',i);   //标记所有列的列数，方便后边取用
-			th.innerHTML=set.table_head[i];
-
-			var sort_icon=document.createElement('div');
-			sort_icon.className='sort_icon';
-			sort_icon.innerHTML='<img src="table_plugin/sort35.png" /><span class="up"></span><span class="down"></span>';
-				
-			if(set.col_sort[i]){
-				sort_icon.style.display='block';
-			}
-
-			th.appendChild(sort_icon);
-			t_head.appendChild(th);	
-
-			//绑定排序事件
-			var up=sort_icon.getElementsByTagName('span')[0];
-			var down=sort_icon.getElementsByTagName('span')[1];
-			up.addEventListener('click',function(event){
-
-				Sorting(event,table,set);
-
-			},false);
-			down.addEventListener('click',function(event){
-
-				Sorting(event,table,set);
-
-			},false);
+	var sort_icon=thead.getElementsByTagName('div');	
+	for (var i=0;i<set.table_col;i++){
+		if(set.col_sort[i]){
+			sort_icon[i].style.display='block';
 		}
 
-	table.appendChild(t_head);
-
-
+	}
+	table.appendChild(thead);
 }
 
 function tableContent(table,set,data){
-
-	for (var i=0; i<set.table_row; i++){
-			var tr=document.createElement('tr');
-				tr.className='trow';
-				tr.setAttribute('row_th',i);  //标记除表单头之外的行的行数，方便后边取用
-			var td="";
-			for(var j=0; j<set.table_col; j++){
-				td+='<td class="tdata">'+data[i+1][j]+'</td>';
-			}
-			tr.innerHTML=td;
-			table.appendChild(tr);
+	// console.log(data)
+	var tbody=document.createElement('tbody');
+	var tr='';
+	for (var i=0;i<set.table_row;i++){
+		var td='';
+		for (var j=0;j<set.table_col;j++){			
+			td+='<td class="tdata">'+data[i+1][j]+'</td>';
 		}
+		tr+='<tr class="trow">'+td+'</tr>';
+	}
+	tbody.innerHTML=tr;
+	table.appendChild(tbody);
 }
-
 
 //表单排序 
 	function Sorting(event,table,set){
-
-		var event=event || window.event;
-		var eventTarget=event.target || event.srcElement;
 		var sort_type=eventTarget.className;
 		var col_th=eventTarget.parentNode.parentNode.getAttribute('col_th');  //获取被点击目标所在的列数
 		var newArr=[];
@@ -117,6 +98,7 @@ function tableContent(table,set,data){
 	
 			newArr[i]=set.table_content[i+1];		
 		}
+		// console.log(newArr);
 		if(sort_type=='up'){
 				newArr.sort(function(a,b){
 					return a[col_th]-b[col_th];
@@ -139,7 +121,7 @@ function tableContent(table,set,data){
 
 function headFixed(table){
 	var thead=table.getElementsByTagName('tr')[0];
-	var content_0=table.getElementsByTagName('tr')[1];
+	var content_0=table.getElementsByTagName('tbody')[0];
 	var content_last=table.getElementsByTagName('tr')[table.getElementsByTagName('tr').length-1]
 	var temp=document.createElement('div');
 	var flag=0;
@@ -157,65 +139,15 @@ function headFixed(table){
 				thead.className='trow';
 				temp.style.display='none';
 		}
-		if(flag==1 && document.body.scrollTop>content_last.offsetTop+150){
-				// thead.className='trow';
-				// temp.style.display='none';	
-		}
-
+		// if(flag==1 && document.body.scrollTop>content_last.offsetTop+150){
+		// 		thead.className='trow';
+		// 		temp.style.display='none';	
+		// }
 
 	},false);
 
 }
 
-
-
-
-
-		// for (var i=0;i<set.table_row;i++){
-		// 	for (var j=0;j<=i;j++){
-
-		// 		if(sort_type=='up'){
-		// 			if(rows_value[i]<rows_value[j]){
-		// 				for (var k=0;k<set.table_col;k++){
-		// 					var temp =rows_value[i];
-		// 						rows_value[i]=rows_value[j];
-		// 						rows_value[j]=temp;
-		// 					var temp=table.rows[i+1].cells[k].innerText;
-		// 					table.rows[i+1].cells[k].innerText=table.rows[j+1].cells[k].innerText;
-		// 					table.rows[j+1].cells[k].innerText=temp;
-		// 				}
-		// 			}
-		// 		}
-		// 		if(sort_type=='down'){
-		// 			if(rows_value[i]>rows_value[j]){
-		// 				for (var k=0;k<set.table_col;k++){
-		// 					var temp =rows_value[i];
-		// 						rows_value[i]=rows_value[j];
-		// 						rows_value[j]=temp;
-		// 					var temp=table.rows[i+1].cells[k].innerText;
-		// 					table.rows[i+1].cells[k].innerText=table.rows[j+1].cells[k].innerText;
-		// 					table.rows[j+1].cells[k].innerText=temp;
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
-
-//问题
-//当有函数event和参数两个要传的时，该如何传参
-// 获取某列的所有行
-// 排序用array.sort(fucntion(a,b){
-// 	 return a-b;
-// }) 时，如何交换一行中所有的值
-
-// 总结
-
- // (1)table取行列的值 table.rows[n].cells[m]
- // (2)获取事件对像 event.target || event.srcElement
-
-// css 选择器：ID class 标签 兄弟 ＋ ~ >  ' '  伪类／伪元素
-// 	优先级：行内=1000 id＝100 class/属性＝10  伪元素／标签＝1  ！importent；
-// 	清除浮动 clearfix 
 
 
 

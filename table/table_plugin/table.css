@@ -61,6 +61,7 @@ th{
 .fixed{
 	position: fixed;
 	top:0px;
+	z-index: 1;
 }
 .thead_temp{
 	width:100%;
