@@ -10,23 +10,18 @@ function Table(){
 		},
 		table_head_fixed:false
 	}
-
+	this.set={};
 }
 
 Table.prototype={
 
 	init:function(cfg){
 	//参数合并
-		var set={};
-			for (var i in this.defaults){
-		 		set[i] = cfg[i] ? cfg[i] : this.defaults[i];
-			}	
-		var table=createTable(table,set);
-		//固定表单头
-		if(set.table_head_fixed){
-			headFixed(table);
+		for (var i in this.defaults){
+	 		this.set[i] = cfg[i] ? cfg[i] : this.defaults[i];
 		}
-
+		var set=this.set;
+		var table=createTable(table,set);
 		return table;
 	}
 }
@@ -34,12 +29,15 @@ Table.prototype={
 //创建表单
 
 function createTable(table,set){
-	// table_head
 	var table=document.createElement('table');
-
+	// table_head
 	tableHead(table,set);	
 	//table_content
 	tableContent(table,set,set.table_content);
+	//固定表单头
+	if(set.table_head_fixed){
+		headFixed(table);
+	}
 
 	return table;
 };
@@ -98,8 +96,7 @@ function tableContent(table,set,data){
 	
 			newArr[i]=set.table_content[i+1];		
 		}
-		// console.log(newArr);
-		if(sort_type=='up'){
+			if(sort_type=='up'){
 				newArr.sort(function(a,b){
 					return a[col_th]-b[col_th];
 				}); //这里newArr为排序好的数组
@@ -127,22 +124,35 @@ function headFixed(table){
 	var flag=0;
 		temp.className='thead_temp';
 		table.insertBefore(temp,content_0);
-	window.addEventListener('scroll',function(event){
-// console.log(document.body.scrollTop-table.offsetTop)
 
+
+	window.addEventListener('scroll',function(event){
+	// console.log(document.body.scrollTop+"..."+table.offsetTop)
+		// console.log(thead.offsetTop+" --"+content_last.offsetTop)
+	var dec= content_last.offsetTop-thead.offsetTop;   // 获取表格体的高度
 		if(document.body.scrollTop>table.offsetTop){
+			var top=table.offsetTop;
 			flag=1;
 			thead.className='trow fixed';
 			temp.style.display='block';
+			// if(document.body.scrollTop>content_last.offsetTop+150){  这里是用绝对距离，出错！！！！！
+			// 	console.log('a')
+			// 	thead.className='trow';
+			// 	temp.style.display='none';   
+			// }
+			if(document.body.scrollTop-top>dec+80){//这里定位时不能用全局的document.body.scroll来计算，要相对于表格自身计算
+		//这里的判断条件是指，当前表格头固定后，滚动条划过的距离大于该表格体的高度时，该表格的头消失。要计算相对距离
+			
+				thead.className='trow';
+				temp.style.display='none';
+			}
+
 		}
 		if(flag==1 && document.body.scrollTop<=table.offsetTop){
 				thead.className='trow';
 				temp.style.display='none';
+				flag=0;
 		}
-		// if(flag==1 && document.body.scrollTop>content_last.offsetTop+150){
-		// 		thead.className='trow';
-		// 		temp.style.display='none';	
-		// }
 
 	},false);
 
