@@ -7,7 +7,8 @@ function Calendar (para){
 	this.set={}	,
 	this.calendar='';
 	this._init(para);
-}
+
+};
 
 Calendar.prototype={
 	_init:function(){
@@ -52,21 +53,21 @@ Calendar.prototype={
 
 		for (var i=set.start_year;i<=set.end_year;i++){
 			if(i==set.year){
-				canlender_head_select1+='<option selected="selected">'+i+'</option>';
+				calendar_head_select1+='<option selected="selected">'+i+'</option>';
 			}else{
-				canlender_head_select1+='<option>'+i+'</option>';
+				calendar_head_select1+='<option>'+i+'</option>';
 			}
 		}
 		for (var i=1;i<=12;i++){
 			if(i==set.month+1){
-				canlender_head_select2+='<option selected="selected">'+i+'</option>';
+				calendar_head_select2+='<option selected="selected">'+i+'</option>';
 
 			}else{
-				canlender_head_select2+='<option>'+i+'</option>';
+				calendar_head_select2+='<option>'+i+'</option>';
 			}
 		}
-		calendar_head.innerHTML='<span class="backward"><</span><select class="select">'+canlender_head_select1
-							+'</select><select class="select">'+canlender_head_select2
+		calendar_head.innerHTML='<span class="backward"><</span><select class="select">'+calendar_head_select1
+							+'</select><select class="select">'+calendar_head_select2
 							+'</select><button>返回</button><span class="forward">></span>';
 		div.appendChild(calendar_head);
 
@@ -110,10 +111,12 @@ Calendar.prototype={
 			if(i<week){
 				td[i].innerHTML=preMonDayCount-week+1+i;
 				td[i].className='notCurrentmonDay';
-			}else if(i>=week && i<week+dayCount){
+			}
+			if(i>=week && i<week+dayCount){
 				td[i].innerHTML=i-week+1;
 				td[set.date+week-1].className='currentDate';
-			}else{
+			}
+			if(i>=week+dayCount){
 				td[i].innerHTML=i-week-dayCount+1;
 				td[i].className='notCurrentmonDay';			
 			}
@@ -137,15 +140,16 @@ Calendar.prototype={
 			for(var i=set.week;i<set.week+set.dayCount;i++){
 				if(target==td[i]){
 					time=td[i].innerHTML;
+					document.getElementById(set.input).value=set.year+'-'+parseInt(set.month+1)+'-'+time;
 				}
+
 			}
 			event.stopPropagation();
-			document.getElementById(set.input).value=set.year+'-'+parseInt(set.month+1)+'-'+time;
 			// console.log(that);/
 			that._hideCalendar();
 		}
 	},
-	_hideCanlender:function(){
+	_hideCalendar:function(){
 		this.calendar.style.display='none';
 	},
 	_changeDate:function(content,calendar_head,calendar_body,set){
@@ -219,8 +223,6 @@ Calendar.prototype={
 		},false);
 	}
 }
-
-
 
 
 

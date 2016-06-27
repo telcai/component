@@ -6,5 +6,5 @@ var para={
 }
 
 document.getElementById('input').onclick=function(e){
-	 new Calendar(para);
+	new Calendar(para);
 }
