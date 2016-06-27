@@ -162,6 +162,7 @@ Calendar.prototype={
 			var target=event.target || event.srcElement;
 			if(target==selectYear){
 				var index=selectYear.selectedIndex;
+				console.log(index);
 				set.year=selectYear.options[index].text;
 			}
 			if(target==selectMonth){
@@ -218,7 +219,7 @@ Calendar.prototype={
 			selectYear.options[year_index].selected='selected';
 			selectMonth.options[month_index].selected='selected';
 			// console.log(month_index+','+set.month);
-			that._canlenderBody(content,calendar_body,set);
+			that._calendarBody(content,calendar_body,set);
 			
 		},false);
 	}
