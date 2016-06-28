@@ -46,6 +46,10 @@ table {
 	background-color: rgba(3, 169, 244, 0.6);
 	border-radius: 5px;
 }
+.selectedDate{
+	background-color: rgba(100,100,100, 0.3);
+	border-radius: 5px;
+}
 .notCurrentmonDay{
 	color:#bbb;
 }

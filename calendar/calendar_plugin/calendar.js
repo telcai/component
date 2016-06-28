@@ -32,9 +32,9 @@ Calendar.prototype={
 		this.set.month=month;
 		this.set.date=date;
 	//当天信息
-		// this.set.currentYear=year;
-		// this.set.currentMonth=month;
-		// this.set.currentDate=date;
+		this.set.currentYear=year;
+		this.set.currentMonth=month+1;
+		this.set.currentDate=date;
 
 		var calendar=this._createCalendar(this.set);
 		this.calendar=calendar;
@@ -68,7 +68,7 @@ Calendar.prototype={
 		}
 		calendar_head.innerHTML='<span class="backward"><</span><select class="select">'+calendar_head_select1
 							+'</select><select class="select">'+calendar_head_select2
-							+'</select><button>返回</button><span class="forward">></span>';
+							+'</select><button class="totoday">返回</button><span class="forward">></span>';
 		div.appendChild(calendar_head);
 
 	// 日历体
@@ -77,7 +77,8 @@ Calendar.prototype={
 		this._calendarBody(div,calendar_body,set);
 	// 设置年月
 		this._changeDate(div,calendar_head,calendar_body,set);
-
+	// 返回
+		// this._toToday(set,calendar_head);
 		return div;
 	},
 
@@ -136,17 +137,22 @@ Calendar.prototype={
 		function getTime(event){
 			var event=event || window.event;
 			var target=event.target || event.srcElement;
-// console.log(set)
+
 			for(var i=set.week;i<set.week+set.dayCount;i++){
+				if(td[i].className=='selectedDate' && td[i].innerHTML!=set.currentDate){
+					td[i].className='';
+				}
 				if(target==td[i]){
+					if(td[i].innerHTML!=set.currentDate){
+						td[i].className='selectedDate';
+					}
 					time=td[i].innerHTML;
 					document.getElementById(set.input).value=set.year+'-'+parseInt(set.month+1)+'-'+time;
+					that._hideCalendar();
 				}
 
 			}
 			event.stopPropagation();
-			// console.log(that);/
-			that._hideCalendar();
 		}
 	},
 	_hideCalendar:function(){
@@ -162,7 +168,7 @@ Calendar.prototype={
 			var target=event.target || event.srcElement;
 			if(target==selectYear){
 				var index=selectYear.selectedIndex;
-				console.log(index);
+				// console.log(index);
 				set.year=selectYear.options[index].text;
 			}
 			if(target==selectMonth){
@@ -171,7 +177,9 @@ Calendar.prototype={
 			}
 		
 			that._calendarBody(content,calendar_body,set);
+			// calendar_head.removeEventListener('change',handler1);
 		},false);
+
 		calendar_head.addEventListener('click',function(event){
 			var event=event || window.event;
 			var target=event.target || event.srcElement;
@@ -214,13 +222,26 @@ Calendar.prototype={
 					}
 				}	
 			}
+
+			if(target.className=='totoday'){
+				for (var i=0;i<selectYear.length;i++){
+					if(selectYear.options[i].text==set.currentYear){
+						year_index=i;
+					}
+				}
+				for (var i=0;i<selectMonth.length;i++){
+					if(selectMonth.options[i].text==set.currentMonth){
+						month_index=i;
+					}
+				}
+			}
+
 			set.year=selectYear.options[year_index].text;
 			set.month=selectMonth.options[month_index].text-1;
 			selectYear.options[year_index].selected='selected';
 			selectMonth.options[month_index].selected='selected';
-			// console.log(month_index+','+set.month);
 			that._calendarBody(content,calendar_body,set);
-			
+
 		},false);
 	}
 }
