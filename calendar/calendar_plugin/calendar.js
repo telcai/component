@@ -271,7 +271,9 @@ var Calendar=(function(){
 				selectedArr.push([seconds,target]);
 			}
 			selectedArr[0][1].className=selectedArr[0][1].className.match('currentDate')?'currentDate selectedDate':'selectedDate';
-			selectedArr[1][1].className=selectedArr[1][1].className.match('currentDate')?'currentDate selectedDate':'selectedDate';	
+			selectedArr[1][1].className=selectedArr[1][1].className.match('currentDate')?'currentDate selectedDate':'selectedDate';
+		//标记时间段	
+			_markPeriod();
 		}
 
 	}//_getPeriodTime()
@@ -334,14 +336,16 @@ var Calendar=(function(){
 	}//_putDate()
 
 	function _markDate(){
-
 		if(set.period[0]&&selectedArr.length==2){  //片段时间
 			if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[0][0]){
 				td[parseInt(selectedArr[0][1].innerHTML)+infor.week-1].className='selectedDate';
+				_markPeriod();
 			}
 			if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[1][0]){
 				td[parseInt(selectedArr[1][1].innerHTML)+infor.week-1].className='selectedDate';
+				_markPeriod();
 			}
+
 		}
 		if(!set.period[0] && selectedArr.length==1){ //单天选择
 			if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[0][0]){
@@ -349,7 +353,59 @@ var Calendar=(function(){
 			}
 		}
 	}
+	function _markPeriod(){
+			var _s=parseInt(selectedArr[0][1].innerHTML);
+			var _e=parseInt(selectedArr[1][1].innerHTML);
+			if(selectedArr[0][0]==selectedArr[1][0]){		
+				for (var i=1;i<td.length-infor.week+1;i++){
+					if(i>_s && i<_e || i>_e && i<_s){
+						// console.log(td[i+infor.week-1])
+						td[i+infor.week-1].className='between';
+					}else{
+						td[i+infor.week-1].className=td[i+infor.week-1].className.replace('between','');
+					}
+				}
+			}
 
+			if(selectedArr[0][0]<selectedArr[1][0]){
+				for (var i=1;i<td.length-infor.week+1;i++){
+					if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[0][0]){
+						if(i>_s){
+							td[i+infor.week-1].className=td[i+infor.week-1].className.match('currentDate')?'currentDate between':'between';
+							// console.log(td[i+infor.week-1]);
+						}else{
+						// console.log('h'+td[i+infor.week-1].innerHTML)
+							td[i+infor.week-1].className=td[i+infor.week-1].className.replace('between','');
+						}
+					}
+					if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[1][0]){
+						if(i<_e){
+							td[i+infor.week-1].className=td[i+infor.week-1].className.match('currentDate')?'currentDate between':'between';///////////////
+						}else{
+							td[i+infor.week-1].className=td[i+infor.week-1].className.replace('between','');
+						}
+					}
+				}
+			}
+
+			if(selectedArr[0][0]>selectedArr[1][0]){
+				for (var i=1;i<td.length-infor.week+1;i++){
+					if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[0][0]){
+						if(i<_s){
+							td[i+infor.week-1].className=td[i+infor.week-1].className.match('currentDate')?'currentDate between':'between';
+						}else{
+							td[i+infor.week-1].className=td[i+infor.week-1].className.replace('between','');
+						}
+					}
+					if((new Date(infor.year+'/'+parseInt(infor.month+1))).getTime()==selectedArr[1][0]){
+						if(i>_e){
+							td[i+infor.week-1].className=td[i+infor.week-1].className.match('currentDate')?'currentDate between':'between';
+						}else{
+							td[i+infor.week-1].className=td[i+infor.week-1].className.replace('between','');}
+					}
+				}
+			}
+	}
 
 
 	return {create:_create}
