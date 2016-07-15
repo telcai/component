@@ -3,10 +3,12 @@
 	-webkit-box-sizing:border-box;
 	-moz-box-sizing:border-box;
 	display: block;
-	width:265px;
+	width:270px;
 	height:auto;
 	border:1px solid #ccc;
 	border-radius: 8px;
+	background-color: #fff;
+	position: absolute;
 }
 .calendar_head{
 	box-sizing:border-box;
@@ -30,7 +32,7 @@
 	-moz-box-sizing:border-box;
 	width:100%;
 	height:auto;
-	padding:5px;
+	padding:7px;
 }
 
 .select1,.select2{
@@ -47,6 +49,7 @@ table tr {
 .thead{
 	width:100%;
 	height:30px;
+	text-align: center;
 }
 .trow{
 	text-align: center;
